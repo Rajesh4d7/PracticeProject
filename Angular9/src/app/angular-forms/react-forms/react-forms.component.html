@@ -1,0 +1,51 @@
+<div>
+    <h3>User Registration Form</h3>
+    <form [formGroup]="registration" (ngSubmit)="save()" novalidate>
+        <div>
+            <input type='text' name="name" formControlName="name" placeholder="name"/>
+        </div>
+        <div>
+            <input type='password' name="password" formControlName="password" placeholder="password"/>
+        </div>
+        <div>
+            <input type='password' name="cnfmpassword" formControlName="cnfmpassword" placeholder="confirm password"/>
+        </div>
+        <div>
+            <input type='email' name="mail" formControlName="mail" placeholder="abc@lmn.xyz"/>
+        </div>
+        <div>Gender:
+            <input type='radio' name="gender" formControlName="gender" value='male'/>male
+            <input type='radio' name="gender" formControlName="gender" value='female'/>female
+        </div>
+        <div>
+            <select  name="qualification" formControlName="qualification">
+                <option>Degree</option>
+                <option>B.tech</option>
+                <option>M.tech</option>
+            </select>
+        </div>
+        <div formGroupName='address'>
+            <h4>Address</h4>
+                <div>
+                    <input type="text" name="flatNo" formControlName="flatNo" placeholder="House number"/>
+                </div>
+                <div>
+                    <input type="text" name="street" formControlName='street' placeholder="street" />
+                </div>
+                <div>
+                    <input type='text' name="pincode" formControlName='pincode' placeholder="pincode"/>
+                </div>
+                <div>
+                    <select name='district' formControlName='district'>
+                        <option>warangal</option>
+                        <option>hyderabad</option>
+                        <option>karimnagar</option>
+                        <option>nizamabad</option>
+                    </select>
+                </div>
+        </div>
+        <div>
+            <button type='submit' [disabled]='!registration.valid'>save</button>
+        </div>
+    </form>
+</div>
