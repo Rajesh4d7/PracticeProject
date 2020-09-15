@@ -1,0 +1,269 @@
+
+  
+  formidable for fileupload
+  
+  nodemailer for email
+  
+  for creating db need to create MongoClient object and specify url with correct ip and dbname
+   var mongoClient=require('mongodb').MongoClient;
+	 var url="mongodb://localhost:9080/dbName"
+  
+     mongoClient.connect(url,(err,db)=>{
+		 if(err){
+			throw err;
+		 }
+		 res.send('db Created')
+		 db close
+	 })
+	  
+  for creating collection   use createCollection('name of the collection',(error,data))
+	  
+  insertOne to insert one document
+  InsertMany to insert many document _id if you define id that will consider but that should be unique otherwise mongodb will aissign unique id for each document
+  
+  findOne--->first occurance of collection
+  find-->all the documents in that collection with projection can apply how many fields u want from collection we can get/not get fields by setting 0 or 1 in projection
+  
+
+  _id: ObjectId(7df78ad8902c)---->7df78ad8902c(12bytes)
+        4 bytes for current timestamp next , 3 bytes for machine id, 2 byte of proces id of mongodb server, 3 bytes for simple incremental value
+
+
+
+
+Any relational database has a typical schema design that shows number of tables and the relationship between these tables. While in MongoDB, there is no concept of relationship.
+
+Advantages of MongoDB over RDBMS
+
+Schema less − MongoDB is a document database in which one collection holds different documents. Number of fields, content and size of the document can differ from one document to another.
+Structure of a single object is clear.
+No complex joins.
+Deep query-ability. MongoDB supports dynamic queries on documents using a document-based query language that's nearly as powerful as SQL.
+Tuning.
+Ease of scale-out − MongoDB is easy to scale.
+Conversion/mapping of application objects to database objects not needed.
+Uses internal memory for storing the (windowed) working set, enabling faster access of data.
+
+Why Use MongoDB?
+
+Document Oriented Storage − Data is stored in the form of JSON style documents.
+Index on any attribute
+Replication and high availability
+Auto-Sharding
+Rich queries
+Fast in-place updates
+Professional support by MongoDB
+
+Where to Use MongoDB?
+
+Big Data
+Content Management and Delivery
+Mobile and Social Infrastructure
+User Data Management
+Data Hub
+
+
+
+
+use DatabaseName  ==>will return the existing database if exist otherwise,not exist the will create the database
+                    and also used to switched that db
+use StudentData
+
+
+show dbs==>want see the dbs list
+  if u create database that wont display untill and unless u insert the data in it.
+
+insert=>to insert the document in the collection
+         db.studentRecord.insert([
+            {"rno":1,"name":"rajesh"},
+            {"rno":2,"name":"koushik"},
+            {"rno":3,"name":"manoj"}
+         ])
+
+note: In mongodb if you not created any db above collection with document will created in test(default database)
+
+dbs.dropDatabase()=> for deleting the database.
+
+dbs.createCollection(name,options)=>for creating a collection
+    name=>specify the colection name 
+    options=>size/indexing
+        capped=>(boolean) is a fixed size collection that automatically overrides the previous entries when it reaches maximum size(if u set true )
+                if mention it true u need to mention its size also
+        autoIndexId=>(boolean)if true automatically create the index on _id default value is false
+        size=>(number) specifies maximum size in bytes for capped collection. if capped collection set true u need to specify size
+        max=>(number)specifies the max number of documents allowed in capped collection
+
+  note: while creating collection mongodb checks size and then checks max
+   ex: dbs.createCollection('studentData')/dbs.studentData
+       dbs.createCollection('studentData',{capped:true,autoindexId:true,size:102400,max:1000})
+
+  show collections:for to c the collections of that particular db
+
+  dbs.studentData.drop()=> will delete studentData(collection) from db
+     will return true if the selcted collection deleted otherwise will return false
+
+
+Datatypes:
+    String,Interger,Boolean,Double,min/max( used to comapte a value against lowest and highest in the bson element)
+    Arrays,Object,Timestamp(when a document  has modified or added),null, symbol ,Date, object id(used to store the document ids)
+    Binary Data(used to store binary data),code (used to store javascript code),
+    Regular Expression(used to store regular Expression)
+
+insert()/save()==> for inserting the document
+   instert => only inserts the document
+   save=> will update and inserts the document
+
+insertOne()=>for inserting one document
+InsertMany()=>for inserting many documents)
+find()=>will display all the documents in non structured way
+  syntax:    db.collection.find()
+
+pretty()=> will display the results in formatted way
+ ex=> db.collection.find().pretty()
+
+findOne()=> will returns only one document
+
+
+to query the document on basis condition:
+
+equal
+    ex: db.colectionName.find({"rno":10});                where rno=10
+$lt=>less than
+  ex: db.collectionName.find({"rno":{$lt:10}})                in sql like where rno<10
+
+$lte=>less than equals
+  ex: db.collectionName.find({"rno":{$lte:10}})
+
+$gt=>greater than
+$lte=>less than equals      where rno<=10
+$gte=>greater than  equals     where rno >=10
+$ne=>not equal                where rno!=10
+
+$in =>values in Array
+    db.collectionName.find({'name':{$in:['rajesh','koushik','manoj']}})
+$nin =>values not in array
+
+$and=>
+     db.collectionName.find({$and:[{name:'rajesh'},{rno:4d7}]})
+
+$or=>
+     db.collectionName.find({$or:[{name:'rajesh'},{rno:4d8}]})
+
+$and $or combination
+     db.collectionName.find({name:"rajesh",$or[{name:"kosuhik",rno:"4d7"}]})
+
+ findOneAndUpdate(selctioncritria,update) 
+    finds the document and updates
+ updateOne(filter,update),updateMany(filter,update)
+
+ remove(deltetion critiria,justone)=>justone if u set 1 or true then deletes only one document
+      ex: db.studentData.remove({age:21}) ==> delete the records which having age=21
+          db.studentData.remove({})=>deltes the whole collections
+          db.studentData.remove({age:21},1) =>delete the only one record which having age=21
+  
+projection:selecting only the neccesary data(fileds/column) rathar than selecting the whole data of the document
+    will use find(selction,optional)
+     ex studentData u having ( _id name age rno) fields
+          but if u want only name rno fields then
+             db.studentData.find({},{"title":1,rno:1,_id:0})                     {}=> will indicates whole data
+               1 will give the field o wont disply the field 
+               if not mentioned _id:0 as then it will display the _id field default
+
+
+limit(number): number of records to display
+       db.studentData.find().limit(4); display the 4 records
+  
+skip(number)=> skip the numbered document defualt value is 0
+       db.studentData.find().limit(2).skip(2)
+       limit will gives the 2 documnet after skipping the 1 and 2
+
+sort({fieldname:1/-1})=> used for sorting the fields assending 1 or decending -1 order
+        db.studentData.find().sort({age:1}) will display the document in ascending order based on age
+
+indexing:supports the efficient execution of queries without indexes mongodb must scan all the documents of that collection
+             to select those documents that matches query statement.
+         indexes are the special datastructures that store a small portion of data set in an easy to tranform form.
+         the indexes stores the value of specific fiels or set of fields, ordered by the value of the field as specified in the index.
+
+    db.studentData.createIndex({name:1},optional)   =>name:1 will ordered ascending and assign the index
+                  optional parameters
+                      background: create the indexes in background so that building an index does not block other database activities.
+                                 specify true to build the indexes background. defualt is false
+                      unique: create a unique index so that the collection will not accept insertion of documents where the insertion key
+                              or keys matching with existing value in the index. the default value is false.
+                      name,sparse,weight,expireAfterSeconds,defualt_language,language_override
+                  
+    dropIndex(field):remove index
+    createIndex(field):create the index
+
+agrregate(): agrregations operations proces data records and returns computed results
+
+syntax: db.collectionName.aggragate(agrregate_operation)
+
+  $group,
+  $sum,
+  $min,
+  $max,
+  $push
+  $addToSet
+  $first
+  $last
+
+
+replication is the process of synchronization betwen multiple server
+
+  To keep your data safe
+  High (24*7) availability of data
+  Disaster recovery
+  No downtime for maintenance (like backups, index rebuilds, compaction)
+  Read scaling (extra copies to read from)
+  Replica set is transparent to the application
+
+  replication: is for taking the replica of database and shared that on multiple server 
+     syntax:  mongod --port "PORT" --dbpath "Your db path" --replSet "replica_id"
+     exple: mongod --port 27017 --dbpath "c:\mongodb"  --replSet rs0
+
+  sharding: is same as replica but if u want to write the data then we can use sharding, for sharding we need to configuared shard_key 
+     across the servers.
+
+Dumping MongoDB Data:
+    >mongodump 
+        it will dump/backup all data from that server  
+    
+    >mongodump --host "Host Name" --port "port"
+        it will dump/backup all databases of the specified mongod instance
+
+    >mongodump --dbpath "db path" --out "backup directory path" 
+       for backup specified database in specified path
+    
+    >mongodump --collection "collection name"  --db "dbname"
+        for backup spcific collection of specific database
+
+    >mongorestore
+        for restoring all the data from the directory
+
+for Deploying mongodb
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                   
