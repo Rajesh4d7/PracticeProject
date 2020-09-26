@@ -49,7 +49,6 @@ mongoClient.connect(url,{useUnifiedTopology: true},(err,client)=>{
         }
     }
 ],(err,result)=>{
-  console.log(result.insertedIds);
   client.close();
 })
 
